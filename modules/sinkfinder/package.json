@@ -1,0 +1,11 @@
+{
+  "name": "sinkfinder",
+  "version": "1.0.0",
+  "description": "Provides support for XSS locator payload to detect unencoded occurences of user controlled data. Mutates URL params and supports the identification of matches.",
+  "main": "index.js",
+  "author": "Thomas Hartmann",
+  "license": "MIT",
+  "dependencies": {
+  },
+  "repository": ""
+}

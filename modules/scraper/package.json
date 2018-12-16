@@ -1,0 +1,12 @@
+{
+  "name": "scraper",
+  "version": "1.0.0",
+  "description": "Request and scrape websites using pupeteer.",
+  "main": "index.js",
+  "author": "Thomas Hartmann",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^1.3.0"
+  },
+  "repository": ""
+}

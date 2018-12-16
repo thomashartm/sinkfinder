@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>App Security Multitool</title>
+    <link rel="stylesheet" href="css/milligram.min.css">
+    <link rel="stylesheet" href="css/analyzer.css">
+</head>
+
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="column">
+            <fieldset>
+                <label for="targetUrl">Target URL</label>
+                <input type="text" placeholder="http://..." id="targetUrl">
+                <button class="button button-outline" id="quickAnalysisBtn">Analyze</button>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="row statusbar">
+        <div class="column " id="status">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="column">
+            Results
+            <table>
+                <thead>
+                <tr>
+                    <th>Property</th>
+                </tr>
+                </thead>
+                <tbody id="results">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script src="./index.js"></script>
+</body>
+
+</html>

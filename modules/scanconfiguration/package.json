@@ -1,0 +1,11 @@
+{
+  "name": "scanconfiguration",
+  "version": "1.0.0",
+  "description": "Generic configuration for setting up the analysis and scan modules",
+  "main": "index.js",
+  "author": "Thomas Hartmann",
+  "license": "MIT",
+  "dependencies": {
+  },
+  "repository": ""
+}

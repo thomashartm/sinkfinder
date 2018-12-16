@@ -1,0 +1,10 @@
+{
+  "name": "url-handler",
+  "version": "1.0.0",
+  "description": "Provides URL parsing and access to all segments of a processed URL.",
+  "main": "index.js",
+  "author": "Thomas Hartmann",
+  "license": "MIT",
+  "dependencies": {},
+  "repository": ""
+}

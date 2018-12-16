@@ -1,0 +1,13 @@
+.statusbar > div {
+    padding-left: 1em;
+    font-family: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-size: .6em;
+    font-weight: 300;
+}
+.row .column > table{
+    padding-left: 1em;
+    font-family: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-size: .6em;
+    font-weight: 300;
+    color: #000000;
+}
