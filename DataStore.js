@@ -6,37 +6,37 @@ class DataStore extends Store {
     constructor (settings) {
         super(settings)
 
-        // initialize with todos or empty array
-        this.todos = this.get('todos') || []
+        // initialize with findings or empty array
+        this.findings = this.get('findings') || []
     }
 
-    saveTodos () {
-        // save todos to JSON file
-        this.set('todos', this.todos)
+    saveFindings () {
+        // save findings to JSON file
+        this.set('findings', this.findings)
 
         // returning 'this' allows method chaining
         return this
     }
 
-    getTodos () {
-        // set object's todos to todos in JSON file
-        this.todos = this.get('todos') || []
+    getFindings () {
+        // set object's findings to findings in JSON file
+        this.findings = this.get('findings') || []
 
         return this
     }
 
-    addTodo (todo) {
-        // merge the existing todos with the new todo
-        this.todos = [ ...this.todos, todo ]
+    addFinding (finding) {
+        // merge the existing findings with the new finding
+        this.findings = [ ...this.findings, finding ]
 
-        return this.saveTodos()
+        return this.saveFindings()
     }
 
-    deleteTodo (todo) {
-        // filter out the target todo
-        this.todos = this.todos.filter(t => t !== todo)
+    deleteFinding (finding) {
+        // filter out the target finding
+        this.findings = this.findings.filter(t => t !== finding)
 
-        return this.saveTodos()
+        return this.saveFindings()
     }
 }
 

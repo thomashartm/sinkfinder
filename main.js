@@ -8,17 +8,30 @@ const DataStore = require('./DataStore')
 
 require('electron-reload')(__dirname)
 
-function main() {
-    // todo list window
-    let mainWindow = new Window({
-        file: path.join('renderer', 'index.html')
-    })
+const dataStore = new DataStore({name: 'SinkFinder Results'})
 
-    mainWindow.webContents.openDevTools();
+function main () {
+  let mainWindow = new Window({
+    file: path.join('renderer', 'urlanalyzer/index.html')
+  })
+
+  ipcMain.on('clearScanResults', (event, finding) => {
+    const store = dataStore.clear()
+    mainWindow.send('clearedScanResults', finding)
+  })
+
+  ipcMain.on('addFinding', (event, finding) => {
+    const store = dataStore.addFinding(finding)
+    console.log('Saved finding')
+    console.log(store)
+    // now resend the event to the rendering window
+
+    mainWindow.send('addedFinding', finding)
+  })
 }
 
 app.on('ready', main)
 
 app.on('window-all-closed', function () {
-    app.quit()
+  app.quit()
 })

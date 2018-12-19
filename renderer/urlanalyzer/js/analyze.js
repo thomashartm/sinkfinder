@@ -7,40 +7,48 @@ const {ipcRenderer} = require('electron')
 
 let allowAction = true
 
-const isInProgress = function (text) {
+const isInProgress = (text) => {
   let message = (text !== undefined && text.length > 0) ? text : 'Working ...'
   allowAction = false
   let statusPanel = document.getElementById('status')
   statusPanel.innerHTML = '<p><em>' + message + '</em></p>'
 }
 
-const isReady = function (text) {
+const isReady = (text) => {
   let statusPanel = document.getElementById('status')
   statusPanel.innerHTML = ''
   allowAction = true
 }
 
-const reportSinkHandler = function (findings) {
+const reportSinkHandler = (findings) => {
   console.log(findings)
 
   for (let id in findings) {
     const finding = findings[id]
-    let resultsTable = document.getElementById('results')
-    resultsTable.insertAdjacentHTML('beforeend', '<tr><td>URL: '+finding.url+'<br>Mutated URL: '+finding.mutatedUrl+'</td></tr>');
+    ipcRenderer.send('addFinding', finding)
   }
 }
 
-const errorHandler = function (reason) {
+const injectAction = (url) => {
+  console.log(url)
+}
+
+const errorHandler = (reason) => {
   console.log(reason) // Error!
 }
 
-const findSyncs = async function (configuration, links) {
+const findSyncs = async (configuration, links) => {
   isInProgress('Probing ... please wait')
   await sinkFinder.locatePayloads(configuration, links)
     .then(reportSinkHandler, errorHandler)
     .catch(console.error)
   isReady()
 }
+
+document.getElementById('clearScanResults').addEventListener('click', () => {
+  console.log("Send clear event");
+  ipcRenderer.send('clearScanResults', {})
+})
 
 // start scan button
 document.getElementById('quickAnalysisBtn').addEventListener('click', () => {
@@ -61,9 +69,6 @@ document.getElementById('quickAnalysisBtn').addEventListener('click', () => {
     let linksPromise = scraper.find(configuration)
     linksPromise.then(function (result) {
       let links = result
-      console.log('processing results')
-      console.log(links)
-
       findSyncs(configuration, links)
     }, function (err) {
       console.log(err)
@@ -75,7 +80,39 @@ document.getElementById('quickAnalysisBtn').addEventListener('click', () => {
   }
 })
 
-ipcRenderer.on('sources', (event, sources) => {
-
-  const todoList = document.getElementById('sourcesList')
+ipcRenderer.on('clearedScanResults', (event, sources) => {
+  // clear results table
+  const resultsTable = getResultsTable()
+  while (resultsTable.firstChild) {
+    resultsTable.removeChild(resultsTable.firstChild);
+  }
 })
+
+ipcRenderer.on('addedFinding', (event, finding) => {
+  console.log(finding)
+  const resultsTable = getResultsTable()
+
+  const dataRow = resultsTable.insertRow();
+  dataRow.setAttribute('id', finding.id)
+
+  const displayValue = createDisplayValue(finding)
+  var valueCell = dataRow.insertCell(0);
+  valueCell.innerHTML= `${displayValue}`
+
+  const actions = createAction(finding.id)
+  var actionCell = dataRow.insertCell(1);
+  actionCell.innerHTML= `${actions}`
+})
+
+const createDisplayValue = (finding) =>{
+  return `Url: ${finding.url}<br>MutatedUrl: ${finding.mutatedUrl}`
+}
+
+const getResultsTable = () => {
+  return document.getElementById('results')
+}
+
+const createAction = (elementId) => {
+  const buttonStyle = 'class="button button-inline" id="injectBtn"'
+  return `<button ${buttonStyle} data-element-id="${elementId}" onClick="injectAction()">Inject</button>`
+}
