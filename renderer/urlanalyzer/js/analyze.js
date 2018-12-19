@@ -105,7 +105,7 @@ ipcRenderer.on('addedFinding', (event, finding) => {
 })
 
 const createDisplayValue = (finding) =>{
-  return `Url: ${finding.url}<br>MutatedUrl: ${finding.mutatedUrl}`
+  return `Url: ${finding.url}<br>MutatedUrl: ${finding.mutatedUrl}<br>`
 }
 
 const getResultsTable = () => {
