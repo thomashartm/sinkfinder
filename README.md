@@ -1,7 +1,8 @@
-# AppSecMultitool
+# SinkFinder
 
-AppSecMultitool identifies potential sinks by passing 
-identifiers into user controlled input parameters. 
+SinkFinder scans a target URL for user controlled input verctors and 
+probes them with a set different payloads to identify
+potential sinks. 
 
 It uses puppeteer to communicate with the target and to evaluate 
 the identifiers which are reflected into the dom.
@@ -16,9 +17,9 @@ To clone and run this repository you'll need [Git](https://git-scm.com) and [Nod
 
 ```bash
 # Clone this repository
-git clone https://github.com/electron/electron-quick-start
+git clone https://github.com/thomashartm/sinkfinder.git
 # Go into the repository
-cd electron-quick-start
+cd sinkfinder
 # Install dependencies
 npm install
 # Run the app
