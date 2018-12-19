@@ -1,7 +1,7 @@
 # AppSecMultitool
 
 AppSecMultitool identifies potential sinks by passing 
-identifiers into sources. 
+identifiers into user controlled input parameters. 
 
 It uses puppeteer to communicate with the target and to evaluate 
 the identifiers which are reflected into the dom.
