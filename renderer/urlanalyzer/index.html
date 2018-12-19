@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>App Security Multitool</title>
+    <title>SinkFinder</title>
     <link rel="stylesheet" href="css/milligram.min.css">
     <link rel="stylesheet" href="css/analyzer.css">
 </head>
@@ -16,20 +16,34 @@
             <fieldset>
                 <label for="targetUrl">Target URL</label>
                 <input type="text" placeholder="http://..." id="targetUrl">
-                <button class="button button-outline" id="quickAnalysisBtn">Analyze</button>
-                <button class="button button-outline" id="clearScanResults">Clear</button>
+                <h5>Analysis</h5>
+                <button class="button button-outline" id="linkAnalysisBtn">Only Target URL</button>
+                <button class="button button-outline" id="quickAnalysisBtn">Scrape all links</button>
+                <label></label>
             </fieldset>
+
         </div>
     </div>
-
-    <div class="row statusbar">
-        <div class="column " id="status">
+    <div class="row">
+        <div class="column">
+            <h5>Operations</h5>
+            <button class="button button-outline" id="clearScanResults">Clear</button>
         </div>
     </div>
 
     <div class="row">
+        <div class="column statusbar" id="status">
+        </div>
+    </div>
+    <div class="row">
+        <div class="column" id="">
+            &nbsp;
+        </div>
+    </div>
+
+    <div class="row results">
         <div class="column">
-            Results
+            <h3>Results</h3>
             <table>
                 <thead>
                 <tr>
