@@ -28,6 +28,13 @@ function main () {
 
     mainWindow.send('addedFinding', finding)
   })
+
+  ipcMain.on('getFinding', (event, id) => {
+    const findings = dataStore.getFinding(id)
+    console.log(findings)
+
+    mainWindow.send('foundRecord', findings)
+  })
 }
 
 app.on('ready', main)

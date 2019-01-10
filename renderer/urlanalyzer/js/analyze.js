@@ -1,5 +1,7 @@
 'use strict'
 
+// using CommonJS modules
+const Split = require('split-grid')
 const Scraper = require('scraper')
 const sinkFinder = require('sinkfinder')
 const Configuration = require('scanconfiguration')
@@ -29,8 +31,9 @@ const reportSinkHandler = (findings) => {
   }
 }
 
-const injectAction = (url) => {
-  console.log(url)
+const detailsAction = (id) => {
+  console.log(id)
+  ipcRenderer.send('getFinding', id)
 }
 
 const errorHandler = (reason) => {
@@ -45,6 +48,21 @@ const identifyPotentialSinks = async (configuration, links) => {
   isReady()
 }
 
+const split = Split({ // gutters specified in options
+  columnGutters: [{
+    track: 1,
+    element: document.querySelector('.column-1'),
+  }, {
+    track: 3,
+    element: document.querySelector('.column-3'),
+  }],
+  rowGutters: [{
+    track: 1,
+    element: document.querySelector('.row-1'),
+  }]
+})
+
+
 document.getElementById('clearScanResults').addEventListener('click', () => {
   console.log('Send clear event')
   ipcRenderer.send('clearScanResults', {})
@@ -56,6 +74,7 @@ document.getElementById('quickAnalysisBtn').addEventListener('click', () => {
     console.log('Actions blocked right now')
     return
   }
+  ipcRenderer.send('clearScanResults', {})
   const urlValue = getTargetUrl()
   try {
     isInProgress('Scraping ... please wait')
@@ -84,7 +103,7 @@ document.getElementById('linkAnalysisBtn').addEventListener('click', () => {
     console.log('Actions blocked right now')
     return
   }
-
+  ipcRenderer.send('clearScanResults', {})
   try {
     const urlValue = getTargetUrl()
     identifyPotentialSinks(new Configuration({
@@ -104,6 +123,15 @@ const getTargetUrl = () => {
   }
   throw new Error('There is no target URL defined.')
 }
+
+
+ipcRenderer.on('foundRecord', (event, data) => {
+  console.log("Found record")
+  console.log(data)
+
+  updateDetailsSection(data)
+})
+
 
 ipcRenderer.on('clearedScanResults', (event, sources) => {
   // clear results table
@@ -137,7 +165,12 @@ const getResultsTable = () => {
   return document.getElementById('results')
 }
 
+const updateDetailsSection = (data) => {
+  const details = document.getElementById('resultdetails')
+  details.innerHTML = `${data}`
+}
+
 const createAction = (elementId) => {
   const buttonStyle = 'class="button button-inline" id="injectBtn"'
-  return `<button ${buttonStyle} data-element-id="${elementId}" onClick="injectAction()">Inject</button>`
+  return `<button ${buttonStyle} data-element-id="${elementId}" onClick="detailsAction(${elementId})">Details</button>`
 }

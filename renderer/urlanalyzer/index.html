@@ -9,7 +9,6 @@
 </head>
 
 <body>
-
 <div class="container">
     <div class="row">
         <div class="column">
@@ -18,7 +17,7 @@
                 <input type="text" placeholder="http://..." id="targetUrl">
                 <h5>Analysis</h5>
                 <button class="button button-outline" id="linkAnalysisBtn">Only Target URL</button>
-                <button class="button button-outline" id="quickAnalysisBtn">Scrape all links</button>
+                <button class="button button-outline" id="quickAnalysisBtn">Scrape links on page</button>
                 <label></label>
             </fieldset>
 
@@ -42,7 +41,7 @@
     </div>
 
     <div class="row results">
-        <div class="column">
+        <div class="column" id="resultlist">
             <h3>Results</h3>
             <table>
                 <thead>
@@ -53,6 +52,9 @@
                 <tbody id="results">
                 </tbody>
             </table>
+        </div>
+        <div class="column" id="resultdetails">
+
         </div>
     </div>
 </div>

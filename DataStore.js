@@ -18,11 +18,19 @@ class DataStore extends Store {
         return this
     }
 
+    getFinding(id) {
+      this.findings = this.get('findings') || []
+      if(this.findings.length < id){
+        return this.findings[id]
+      }
+      return {}
+    }
+
     getFindings () {
         // set object's findings to findings in JSON file
         this.findings = this.get('findings') || []
 
-        return this
+        return this.findings
     }
 
     addFinding (finding) {
