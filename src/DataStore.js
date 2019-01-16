@@ -2,7 +2,7 @@
 
 const Store = require('electron-store')
 
-class DataStore extends Store {
+class FindingsDataStore extends Store {
     constructor (settings) {
         super(settings)
 
@@ -48,4 +48,4 @@ class DataStore extends Store {
     }
 }
 
-module.exports = DataStore
+module.exports = FindingsDataStore

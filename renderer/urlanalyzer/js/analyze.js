@@ -2,9 +2,7 @@
 
 // using CommonJS modules
 const Split = require('split-grid')
-const Scraper = require('scraper')
-const sinkFinder = require('sinkfinder')
-const Configuration = require('scanconfiguration')
+
 const {ipcRenderer} = require('electron')
 
 let allowAction = true
@@ -16,36 +14,15 @@ const isInProgress = (text) => {
   statusPanel.innerHTML = '<p><em>' + message + '</em></p>'
 }
 
-const isReady = (text) => {
+const isReady = () => {
   let statusPanel = document.getElementById('status')
   statusPanel.innerHTML = ''
   allowAction = true
 }
 
-const reportSinkHandler = (findings) => {
-  console.log(findings)
-
-  for (let id in findings) {
-    const finding = findings[id]
-    ipcRenderer.send('addFinding', finding)
-  }
-}
-
 const detailsAction = (id) => {
   console.log(id)
   ipcRenderer.send('getFinding', id)
-}
-
-const errorHandler = (reason) => {
-  console.log(reason) // Error!
-}
-
-const identifyPotentialSinks = async (configuration, links) => {
-  isInProgress('Probing ... please wait')
-  await sinkFinder.locatePayloads(configuration, links)
-    .then(reportSinkHandler, errorHandler)
-    .catch(console.error)
-  isReady()
 }
 
 const split = Split({ // gutters specified in options
@@ -62,60 +39,6 @@ const split = Split({ // gutters specified in options
   }]
 })
 
-
-document.getElementById('clearScanResults').addEventListener('click', () => {
-  console.log('Send clear event')
-  ipcRenderer.send('clearScanResults', {})
-})
-
-// start scan button
-document.getElementById('quickAnalysisBtn').addEventListener('click', () => {
-  if (!allowAction) {
-    console.log('Actions blocked right now')
-    return
-  }
-  ipcRenderer.send('clearScanResults', {})
-  const urlValue = getTargetUrl()
-  try {
-    isInProgress('Scraping ... please wait')
-    let configuration = new Configuration({
-      url: urlValue,
-      deep: false,
-      full: false
-    })
-
-    let scraper = new Scraper()
-    let linksPromise = scraper.find(configuration)
-    linksPromise.then(function (result) {
-      let links = result
-      identifyPotentialSinks(configuration, links)
-    }, function (err) {
-      console.log(err)
-      isReady()
-    })
-  } catch (err) {
-    alert(err)
-  }
-})
-
-document.getElementById('linkAnalysisBtn').addEventListener('click', () => {
-  if (!allowAction) {
-    console.log('Actions blocked right now')
-    return
-  }
-  ipcRenderer.send('clearScanResults', {})
-  try {
-    const urlValue = getTargetUrl()
-    identifyPotentialSinks(new Configuration({
-      url: urlValue,
-      deep: false,
-      full: false
-    }), [urlValue])
-  } catch (err) {
-    alert(err)
-  }
-})
-
 const getTargetUrl = () => {
   const urlValue = document.getElementById('targetUrl').value
   if (urlValue !== undefined && urlValue.length > 0) {
@@ -124,24 +47,86 @@ const getTargetUrl = () => {
   throw new Error('There is no target URL defined.')
 }
 
+const createDisplayValue = (finding) => {
+  return `Url: ${finding.url}<br>MutatedUrl: ${finding.mutatedUrl}<br>`
+}
 
-ipcRenderer.on('foundRecord', (event, data) => {
-  console.log("Found record")
-  console.log(data)
+const getResultsTable = () => {
+  return document.getElementById('results')
+}
 
-  updateDetailsSection(data)
+const updateElement = (elementId, data) => {
+  const element = document.getElementById(elementId)
+  element.innerHTML = `${data}`
+}
+
+const createAction = (elementId) => {
+  const buttonStyle = 'class="button button-inline" id="injectBtn"'
+  return `<button ${buttonStyle} data-element-id="${elementId}" onClick="detailsAction(${elementId})">Details</button>`
+}
+
+const clearTable = () => {
+  console.log("Perform clear table now")
+  const resultsTable = getResultsTable()
+  while (resultsTable.firstChild) {
+    resultsTable.removeChild(resultsTable.firstChild)
+  }
+}
+
+// DOM tree event listeners
+document.getElementById('clear-scan-results').addEventListener('click', () => {
+  clearTable()
+})
+
+// start scan button
+document.getElementById('quickAnalysisBtn').addEventListener('click', () => {
+  if (!allowAction) {
+    console.log('Actions blocked right now')
+    return
+  }
+  clearTable()
+  ipcRenderer.send('scrape-and-analyze-links', {targetUrl: getTargetUrl()})
+})
+
+document.getElementById('linkAnalysisBtn').addEventListener('click', () => {
+  if (!allowAction) {
+    console.log('Actions blocked right now')
+    return
+  }
+  clearTable()
+  ipcRenderer.send('analyze-link', {targetUrl: getTargetUrl()})
 })
 
 
-ipcRenderer.on('clearedScanResults', (event, sources) => {
+// ipcRender event listeners
+ipcRenderer.on('progress-update', (event, data) => {
+  console.log('in-progress')
+  isInProgress('Work in progress ... please wait')
+})
+
+ipcRenderer.on('ready', (event, data) => {
+  console.log('ready')
+  isReady("")
+})
+
+ipcRenderer.on('foundRecord', (event, data) => {
+  console.log('Found record')
+  console.log(data)
+
+  updateElement("resultdetails", data)
+})
+
+ipcRenderer.on('clear-scan-results', (event, sources) => {
   // clear results table
+  console.log("Perform clear table now")
   const resultsTable = getResultsTable()
   while (resultsTable.firstChild) {
     resultsTable.removeChild(resultsTable.firstChild)
   }
 })
 
-ipcRenderer.on('addedFinding', (event, finding) => {
+ipcRenderer.on('addFinding', (event, finding) => {
+  console.log("Horray we add something")
   console.log(finding)
   const resultsTable = getResultsTable()
 
@@ -156,21 +141,3 @@ ipcRenderer.on('addedFinding', (event, finding) => {
   var actionCell = dataRow.insertCell(1)
   actionCell.innerHTML = `${actions}`
 })
-
-const createDisplayValue = (finding) => {
-  return `Url: ${finding.url}<br>MutatedUrl: ${finding.mutatedUrl}<br>`
-}
-
-const getResultsTable = () => {
-  return document.getElementById('results')
-}
-
-const updateDetailsSection = (data) => {
-  const details = document.getElementById('resultdetails')
-  details.innerHTML = `${data}`
-}
-
-const createAction = (elementId) => {
-  const buttonStyle = 'class="button button-inline" id="injectBtn"'
-  return `<button ${buttonStyle} data-element-id="${elementId}" onClick="detailsAction(${elementId})">Details</button>`
-}

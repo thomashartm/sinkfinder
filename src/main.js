@@ -4,7 +4,8 @@ const path = require('path')
 const {app, ipcMain} = require('electron')
 
 const Window = require('./Window')
-const PersistanceController = require('./PersistanceController')
+const PersistenceController = require('./PersistanceController')
+const PageAnalysisController = require('./PageAnalysisController')
 
 require('electron-reload')(__dirname)
 
@@ -13,8 +14,11 @@ const main  = () => {
     file: path.join('renderer', 'urlanalyzer/index.html')
   })
 
-  const persistanceController = new PersistanceController(mainWindow)
+  const persistanceController = new PersistenceController(mainWindow)
+  const pageAnalysisController = new PageAnalysisController(mainWindow)
+
   persistanceController.initializeHandlers()
+  pageAnalysisController.initializeHandlers()
 }
 
 app.on('ready', main)
