@@ -20,11 +20,6 @@ const isReady = () => {
   allowAction = true
 }
 
-const detailsAction = (id) => {
-  console.log(id)
-  ipcRenderer.send('getFinding', id)
-}
-
 const split = Split({ // gutters specified in options
   columnGutters: [{
     track: 1,
@@ -73,6 +68,11 @@ const clearTable = () => {
   }
 }
 
+const detailsAction = (id) => {
+  console.log(id)
+  ipcRenderer.send('get-finding-details', id)
+}
+
 // DOM tree event listeners
 document.getElementById('clear-scan-results').addEventListener('click', () => {
   clearTable()
@@ -97,6 +97,10 @@ document.getElementById('linkAnalysisBtn').addEventListener('click', () => {
   ipcRenderer.send('analyze-link', {targetUrl: getTargetUrl()})
 })
 
+ipcRenderer.on('fetched-finding-from-datastore', (event, data) => {
+  console.log('Fetched from datastore')
+  console.log(data)
+})
 
 // ipcRender event listeners
 ipcRenderer.on('progress-update', (event, data) => {
@@ -126,8 +130,6 @@ ipcRenderer.on('clear-scan-results', (event, sources) => {
 })
 
 ipcRenderer.on('addFinding', (event, finding) => {
-  console.log("Horray we add something")
-  console.log(finding)
   const resultsTable = getResultsTable()
 
   const dataRow = resultsTable.insertRow()

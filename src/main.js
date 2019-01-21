@@ -15,7 +15,8 @@ const main  = () => {
   })
 
   const persistanceController = new PersistenceController(mainWindow)
-  const pageAnalysisController = new PageAnalysisController(mainWindow)
+
+  const pageAnalysisController = new PageAnalysisController(mainWindow, persistanceController)
 
   persistanceController.initializeHandlers()
   pageAnalysisController.initializeHandlers()

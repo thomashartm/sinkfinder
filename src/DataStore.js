@@ -19,10 +19,10 @@ class FindingsDataStore extends Store {
     }
 
     getFinding(id) {
-      this.findings = this.get('findings') || []
       if(this.findings.length < id){
         return this.findings[id]
       }
+      console.log('Datastore is empty')
       return {}
     }
 

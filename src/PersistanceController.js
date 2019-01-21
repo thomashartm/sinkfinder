@@ -2,13 +2,13 @@
 
 const {ipcMain} = require('electron')
 const IpcHandler = require('./IpcHandler')
-const DataStore = require('./DataStore')
+const FindingsDataStore = require('./DataStore')
 
 class PersistanceController extends IpcHandler {
 
   constructor (window) {
     super(window)
-    this.dataStore = new DataStore({name: 'SinkFinder Results'})
+    this.dataStore = new FindingsDataStore({name: 'SinkFinder Results'})
   }
 
   initializeHandlers () {
@@ -17,21 +17,19 @@ class PersistanceController extends IpcHandler {
         event.sender.send('clearedScanResults', {message: 'Datastore cleared'})
       }
     )
+  }
 
-    this.registerHandler('addFinding', (event, finding) => {
-        console.log('Saved finding')
-        const store = this.dataStore.addFinding(finding)
-        console.log(store)
-        event.sender.send('addedFinding', finding)
-      }
-    )
+  addFinding(finding) {
+    console.log('Stored finding in datastore')
+    const store = this.dataStore.addFinding(finding)
+    console.log(store)
+  }
 
-    this.registerHandler('getFinding', (event, id) => {
-        const findings = this.dataStore.getFinding(id)
-        console.log(findings)
-        event.sender.send('foundRecord', findings)
-      }
-    )
+  getFinding(id) {
+    const result = this.dataStore.getFinding(id)
+    console.log('fetch data for id '+  id)
+    console.log(result)
+    return result
   }
 }
 
