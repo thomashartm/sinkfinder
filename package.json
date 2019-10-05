@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/xxx",
+  "repository": "https://github.com/thomashartm/sinkfinder",
   "keywords": [
     "AppSec",
     "Electron",
